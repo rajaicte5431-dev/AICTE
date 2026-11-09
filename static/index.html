@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syllabus & Curriculum Design Optimizer — IBM Granite</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --border: #d1d5de;
+      --primary: #0f62fe;
+      --primary-dark: #0043ce;
+      --accent: #6929c4;
+      --success: #198038;
+      --warn: #f1c21b;
+      --text: #161616;
+      --muted: #525252;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+    body {
+      font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ───────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0f62fe 0%, #6929c4 100%);
+      color: #fff;
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    header .logo {
+      font-size: 2rem;
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -.3px; }
+    header p  { font-size: .85rem; opacity: .85; margin-top: 2px; }
+    .ibm-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: .78rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ── Layout ───────────────────────────────────── */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* ── Sidebar ──────────────────────────────────── */
+    nav {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    nav .section-label {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      padding: 8px 20px 4px;
+    }
+    nav button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 11px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: .9rem;
+      color: var(--text);
+      text-align: left;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-color .15s;
+    }
+    nav button:hover   { background: #f0f4ff; }
+    nav button.active  { background: #e8f0fe; border-left-color: var(--primary); color: var(--primary); font-weight: 600; }
+    nav button .icon   { font-size: 1.1rem; }
+
+    /* ── Main content ─────────────────────────────── */
+    main { padding: 32px 40px; max-width: 860px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+
+    /* ── Cards ────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 14px; color: var(--accent); }
+
+    /* ── Form elements ───────────────────────────── */
+    label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 5px; color: var(--muted); }
+    input[type=text], input[type=number], textarea, select {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: .9rem;
+      font-family: inherit;
+      background: #f9fafb;
+      color: var(--text);
+      transition: border-color .15s;
+      margin-bottom: 14px;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+    textarea { resize: vertical; min-height: 130px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+    /* ── Buttons ──────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 6px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .18s, transform .1s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary   { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--accent); color: #fff; }
+    .btn-secondary:hover { background: #491d8b; }
+    .btn-outline   { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: #e8f0fe; }
+    .btn-sm { padding: 6px 14px; font-size: .82rem; }
+
+    /* ── Upload zone ──────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      margin-bottom: 14px;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--primary);
+      background: #f0f4ff;
+    }
+    .upload-zone .icon { font-size: 2.2rem; display: block; margin-bottom: 6px; }
+    .upload-zone p { color: var(--muted); font-size: .88rem; }
+    #file-name { font-size: .82rem; color: var(--success); margin-top: 6px; font-weight: 600; }
+
+    /* ── Result area ──────────────────────────────── */
+    .result-box {
+      background: #f8f9fc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-top: 18px;
+      white-space: pre-wrap;
+      font-size: .88rem;
+      line-height: 1.7;
+      max-height: 520px;
+      overflow-y: auto;
+      display: none;
+    }
+    .result-box.visible { display: block; }
+
+    /* ── Loader ───────────────────────────────────── */
+    .loader {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      color: var(--primary);
+      font-size: .9rem;
+    }
+    .loader.visible { display: flex; }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 3px solid #c7d2f5;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Status bar ───────────────────────────────── */
+    .status-bar {
+      display: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: .87rem;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+    .status-bar.visible { display: block; }
+    .status-bar.success { background: #defbe6; color: var(--success); border: 1px solid #a7f0ba; }
+    .status-bar.error   { background: #fff1f1; color: #da1e28; border: 1px solid #ffb3b8; }
+
+    /* ── Dashboard ────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 18px;
+      box-shadow: var(--shadow);
+    }
+    .stat-card .num  { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .stat-card .lbl  { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: box-shadow .18s;
+    }
+    .feature-card:hover { box-shadow: 0 4px 20px rgba(15,98,254,.15); }
+    .feature-card .ficon { font-size: 1.6rem; }
+    .feature-card h4 { font-size: .95rem; font-weight: 600; margin-bottom: 4px; }
+    .feature-card p  { font-size: .82rem; color: var(--muted); }
+
+    /* ── Tags ─────────────────────────────────────── */
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .tag {
+      background: #e8f0fe;
+      color: var(--primary);
+      border-radius: 20px;
+      padding: 3px 11px;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #c7d2f5;
+    }
+    .tag.selected { background: var(--primary); color: #fff; }
+
+    /* ── Copy btn ─────────────────────────────────── */
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .result-header span { font-size: .82rem; color: var(--muted); font-weight: 600; }
+
+    /* ── Model info strip ─────────────────────────── */
+    .model-strip {
+      background: linear-gradient(90deg, #e8f0fe, #f3ecff);
+      border: 1px solid #c7d2f5;
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .83rem;
+      color: #1a1a2e;
+      margin-bottom: 20px;
+    }
+    .model-strip .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+    }
+
+    @media(max-width:760px) {
+      .app { grid-template-columns: 1fr; }
+      nav  { display: none; }
+      main { padding: 18px; }
+      .row, .row-3, .stats-grid, .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">🎓</span>
+  <div>
+    <h1>Syllabus & Curriculum Design Optimizer</h1>
+    <p>AI-powered curriculum development · Problem Statement #14</p>
+  </div>
+  <span class="ibm-badge">⚡ IBM Granite</span>
+</header>
+
+<div class="app">
+  <!-- ── Sidebar ─────────────────────────────────── -->
+  <nav>
+    <div class="section-label">Overview</div>
+    <button class="active" onclick="showPanel('dashboard', this)">
+      <span class="icon">🏠</span> Dashboard
+    </button>
+
+    <div class="section-label">AI Tools</div>
+    <button onclick="showPanel('analyze', this)">
+      <span class="icon">🔍</span> Analyze Syllabus
+    </button>
+    <button onclick="showPanel('generate', this)">
+      <span class="icon">✨</span> Generate Syllabus
+    </button>
+    <button onclick="showPanel('outcomes', this)">
+      <span class="icon">🎯</span> Map Outcomes
+    </button>
+    <button onclick="showPanel('resources', this)">
+      <span class="icon">📚</span> Recommend Resources
+    </button>
+    <button onclick="showPanel('accreditation', this)">
+      <span class="icon">✅</span> Accreditation Check
+    </button>
+    <button onclick="showPanel('optimize', this)">
+      <span class="icon">⚡</span> Optimize Syllabus
+    </button>
+
+    <div class="section-label">More</div>
+    <button onclick="showPanel('about', this)">
+      <span class="icon">ℹ️</span> About
+    </button>
+  </nav>
+
+  <!-- ── Main ───────────────────────────────────── -->
+  <main>
+
+    <!-- Dashboard -->
+    <div id="panel-dashboard" class="panel active">
+      <h2>Welcome to Curriculum Optimizer</h2>
+      <p class="subtitle">Powered by IBM Granite on IBM Cloud Lite — your AI partner for academic excellence</p>
+
+      <div class="model-strip">
+        <div class="dot"></div>
+        <strong>Model:</strong>&nbsp;ibm/granite-13b-instruct-v2 &nbsp;|&nbsp;
+        <strong>Platform:</strong>&nbsp;IBM watsonx.ai (Cloud Lite) &nbsp;|&nbsp;
+        <strong>Endpoint:</strong>&nbsp;us-south.ml.cloud.ibm.com
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="num">6</div><div class="lbl">AI-powered tools</div></div>
+        <div class="stat-card"><div class="num">3</div><div class="lbl">Accreditation standards</div></div>
+        <div class="stat-card"><div class="num">100%</div><div class="lbl">IBM Granite powered</div></div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card" onclick="showPanel('analyze', document.querySelector('nav button:nth-of-type(2)'))">
+          <span class="ficon">🔍</span>
+          <div><h4>Analyze Syllabus</h4><p>Upload or paste a syllabus to get a detailed AI analysis with gaps and improvements.</p></div>
+        </div>
+        <div class="feature-card" onclick="showPanel('generate', document.querySelector('nav button:nth-of-type(3)'))">
+          <span class="ficon">✨</span>
+          <div><h4>Generate Syllabus</h4><p>Create a complete, standards-aligned syllabus from scratch in seconds.</p></div>
+        </div>
+        <div class="feature-card" onclick="showPanel('outcomes', document.querySelector('nav button:nth-of-type(4)'))">
+          <span class="ficon">🎯</span>
+          <div><h4>Map Outcomes</h4><p>Map learning outcomes to Bloom's Taxonomy and accreditation criteria.</p></div>
+        </div>
+        <div class="feature-card" onclick="showPanel('resources', document.querySelector('nav button:nth-of-type(5)'))">
+          <span class="ficon">📚</span>
+          <div><h4>Recommend Resources</h4><p>Get curated reading lists and online resources aligned to course topics.</p></div>
+        </div>
+        <div class="feature-card" onclick="showPanel('accreditation', document.querySelector('nav button:nth-of-type(6)'))">
+          <span class="ficon">✅</span>
+          <div><h4>Accreditation Check</h4><p>Verify compliance with ABET, NAAC, or NBA accreditation standards.</p></div>
+        </div>
+        <div class="feature-card" onclick="showPanel('optimize', document.querySelector('nav button:nth-of-type(7)'))">
+          <span class="ficon">⚡</span>
+          <div><h4>Optimize Syllabus</h4><p>Automatically improve an existing syllabus with AI-driven enhancements.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analyze Syllabus -->
+    <div id="panel-analyze" class="panel">
+      <h2>🔍 Analyze Syllabus</h2>
+      <p class="subtitle">Upload or paste an existing syllabus. IBM Granite will identify strengths, gaps, and improvements.</p>
+
+      <div class="card">
+        <h3>Upload Syllabus File</h3>
+        <div class="upload-zone" id="upload-zone-analyze"
+          ondragover="dragOver(event,'upload-zone-analyze')"
+          ondragleave="dragLeave('upload-zone-analyze')"
+          ondrop="dropFile(event,'analyze-text')"
+          onclick="document.getElementById('file-input-analyze').click()">
+          <span class="icon">📄</span>
+          <p>Drag & drop PDF, DOCX, or TXT  ·  or click to browse</p>
+          <div id="file-name-analyze" class="file-name"></div>
+        </div>
+        <input type="file" id="file-input-analyze" accept=".pdf,.docx,.txt" style="display:none"
+          onchange="uploadFile(this,'analyze-text','file-name-analyze')">
+      </div>
+
+      <div class="card">
+        <h3>Syllabus Content</h3>
+        <label for="analyze-text">Paste or edit syllabus text:</label>
+        <textarea id="analyze-text" placeholder="Paste your syllabus here or upload a file above..."></textarea>
+
+        <div class="row">
+          <div>
+            <label for="analyze-level">Course Level</label>
+            <select id="analyze-level">
+              <option value="undergraduate">Undergraduate</option>
+              <option value="postgraduate">Postgraduate</option>
+              <option value="doctoral">Doctoral</option>
+            </select>
+          </div>
+          <div>
+            <label for="analyze-accred">Accreditation Body</label>
+            <select id="analyze-accred">
+              <option value="ABET">ABET</option>
+              <option value="NAAC">NAAC</option>
+              <option value="NBA">NBA</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="runAnalyze()">🔍 Analyze with IBM Granite</button>
+        <div class="loader" id="loader-analyze"><div class="spinner"></div> IBM Granite is analyzing your syllabus…</div>
+        <div class="status-bar" id="status-analyze"></div>
+      </div>
+
+      <div id="result-analyze-wrap" style="display:none">
+        <div class="result-header">
+          <span>📊 Analysis Result</span>
+          <button class="btn btn-outline btn-sm" onclick="copyResult('result-analyze')">📋 Copy</button>
+        </div>
+        <div class="result-box visible" id="result-analyze"></div>
+      </div>
+    </div>
+
+    <!-- Generate Syllabus -->
+    <div id="panel-generate" class="panel">
+      <h2>✨ Generate Syllabus</h2>
+      <p class="subtitle">Fill in the course details and IBM Granite will create a complete syllabus for you.</p>
+
+      <div class="card">
+        <h3>Course Details</h3>
+        <div class="row">
+          <div>
+            <label for="gen-title">Course Title *</label>
+            <input type="text" id="gen-title" placeholder="e.g., Introduction to Machine Learning">
+          </div>
+          <div>
+            <label for="gen-dept">Department</label>
+            <input type="text" id="gen-dept" placeholder="e.g., Computer Science">
+          </div>
+        </div>
+        <label for="gen-desc">Course Description *</label>
+        <textarea id="gen-desc" style="min-height:80px" placeholder="Brief description of what the course covers..."></textarea>
+
+        <div class="row-3">
+          <div>
+            <label for="gen-weeks">Duration (Weeks)</label>
+            <input type="number" id="gen-weeks" value="15" min="4" max="52">
+          </div>
+          <div>
+            <label for="gen-credits">Credits</label>
+            <input type="number" id="gen-credits" value="3" min="1" max="6">
+          </div>
+          <div>
+            <label for="gen-level">Course Level</label>
+            <select id="gen-level">
+              <option value="undergraduate">Undergraduate</option>
+              <option value="postgraduate">Postgraduate</option>
+              <option value="doctoral">Doctoral</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="gen-accred">Accreditation Body</label>
+        <select id="gen-accred">
+          <option value="ABET">ABET</option>
+          <option value="NAAC">NAAC</option>
+          <option value="NBA">NBA</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label>Focus Areas (select all that apply)</label>
+        <div class="tags" id="focus-tags">
+          <span class="tag" onclick="toggleTag(this)">Theory</span>
+          <span class="tag" onclick="toggleTag(this)">Practical Labs</span>
+          <span class="tag" onclick="toggleTag(this)">Research</span>
+          <span class="tag" onclick="toggleTag(this)">Industry Applications</span>
+          <span class="tag" onclick="toggleTag(this)">Ethics</span>
+          <span class="tag" onclick="toggleTag(this)">Case Studies</span>
+          <span class="tag" onclick="toggleTag(this)">Project-Based</span>
+          <span class="tag" onclick="toggleTag(this)">AI & ML</span>
+          <span class="tag" onclick="toggleTag(this)">Data Science</span>
+          <span class="tag" onclick="toggleTag(this)">Cloud Computing</span>
+        </div>
+
+        <button class="btn btn-primary" onclick="runGenerate()">✨ Generate with IBM Granite</button>
+        <div class="loader" id="loader-generate"><div class="spinner"></div> IBM Granite is generating your syllabus…</div>
+        <div class="status-bar" id="status-generate"></div>
+      </div>
+
+      <div id="result-generate-wrap" style="display:none">
+        <div class="result-header">
+          <span>📄 Generated Syllabus</span>
+          <button class="btn btn-outline btn-sm" onclick="copyResult('result-generate')">📋 Copy</button>
+        </div>
+        <div class="result-box visible" id="result-generate"></div>
+      </div>
+    </div>
+
+    <!-- Map Outcomes -->
+    <div id="panel-outcomes" class="panel">
+      <h2>🎯 Map Learning Outcomes</h2>
+      <p class="subtitle">Automatically map course outcomes to Bloom's Taxonomy levels and accreditation standards.</p>
+
+      <div class="card">
+        <h3>Syllabus Input</h3>
+        <div class="upload-zone" id="upload-zone-outcomes"
+          ondragover="dragOver(event,'upload-zone-outcomes')"
+          ondragleave="dragLeave('upload-zone-outcomes')"
+          ondrop="dropFile(event,'outcomes-text')"
+          onclick="document.getElementById('file-input-outcomes').click()">
+          <span class="icon">📄</span>
+          <p>Upload PDF, DOCX, or TXT</p>
+        </div>
+        <input type="file" id="file-input-outcomes" accept=".pdf,.docx,.txt" style="display:none"
+          onchange="uploadFile(this,'outcomes-text','')">
+        <label for="outcomes-text">Syllabus Text:</label>
+        <textarea id="outcomes-text" placeholder="Paste syllabus to map outcomes..."></textarea>
+        <label for="outcomes-accred">Accreditation Standard</label>
+        <select id="outcomes-accred">
+          <option value="ABET">ABET</option>
+          <option value="NAAC">NAAC</option>
+          <option value="NBA">NBA</option>
+        </select>
+        <button class="btn btn-secondary" onclick="runOutcomes()">🎯 Map Outcomes</button>
+        <div class="loader" id="loader-outcomes"><div class="spinner"></div> Mapping outcomes with IBM Granite…</div>
+        <div class="status-bar" id="status-outcomes"></div>
+      </div>
+      <div id="result-outcomes-wrap" style="display:none">
+        <div class="result-header">
+          <span>📊 Outcome Mapping</span>
+          <button class="btn btn-outline btn-sm" onclick="copyResult('result-outcomes')">📋 Copy</button>
+        </div>
+        <div class="result-box visible" id="result-outcomes"></div>
+      </div>
+    </div>
+
+    <!-- Recommend Resources -->
+    <div id="panel-resources" class="panel">
+      <h2>📚 Recommend Resources</h2>
+      <p class="subtitle">IBM Granite curates up-to-date textbooks, articles, and online resources for your course.</p>
+
+      <div class="card">
+        <h3>Course Info</h3>
+        <label for="res-title">Course Title *</label>
+        <input type="text" id="res-title" placeholder="e.g., Data Structures and Algorithms">
+        <label for="res-level">Course Level</label>
+        <select id="res-level">
+          <option value="undergraduate">Undergraduate</option>
+          <option value="postgraduate">Postgraduate</option>
+          <option value="doctoral">Doctoral</option>
+        </select>
+        <label for="res-topics">Topics (one per line) *</label>
+        <textarea id="res-topics" placeholder="Arrays and Linked Lists&#10;Sorting Algorithms&#10;Graph Traversal&#10;Dynamic Programming"></textarea>
+        <button class="btn btn-primary" onclick="runResources()">📚 Get Recommendations</button>
+        <div class="loader" id="loader-resources"><div class="spinner"></div> IBM Granite is curating resources…</div>
+        <div class="status-bar" id="status-resources"></div>
+      </div>
+      <div id="result-resources-wrap" style="display:none">
+        <div class="result-header">
+          <span>📖 Recommended Resources</span>
+          <button class="btn btn-outline btn-sm" onclick="copyResult('result-resources')">📋 Copy</button>
+        </div>
+        <div class="result-box visible" id="result-resources"></div>
+      </div>
+    </div>
+
+    <!-- Accreditation Check -->
+    <div id="panel-accreditation" class="panel">
+      <h2>✅ Accreditation Compliance Check</h2>
+      <p class="subtitle">Verify your syllabus against ABET, NAAC, or NBA standards with a detailed compliance report.</p>
+
+      <div class="card">
+        <h3>Syllabus Input</h3>
+        <div class="upload-zone" id="upload-zone-accred"
+          ondragover="dragOver(event,'upload-zone-accred')"
+          ondragleave="dragLeave('upload-zone-accred')"
+          ondrop="dropFile(event,'accred-text')"
+          onclick="document.getElementById('file-input-accred').click()">
+          <span class="icon">📄</span>
+          <p>Upload PDF, DOCX, or TXT</p>
+        </div>
+        <input type="file" id="file-input-accred" accept=".pdf,.docx,.txt" style="display:none"
+          onchange="uploadFile(this,'accred-text','')">
+        <label for="accred-text">Syllabus Text:</label>
+        <textarea id="accred-text" placeholder="Paste your syllabus for compliance check..."></textarea>
+        <label for="accred-body">Accreditation Body</label>
+        <select id="accred-body">
+          <option value="ABET">ABET</option>
+          <option value="NAAC">NAAC</option>
+          <option value="NBA">NBA</option>
+        </select>
+        <button class="btn btn-primary" onclick="runAccreditation()">✅ Check Compliance</button>
+        <div class="loader" id="loader-accreditation"><div class="spinner"></div> Checking accreditation compliance…</div>
+        <div class="status-bar" id="status-accreditation"></div>
+      </div>
+      <div id="result-accreditation-wrap" style="display:none">
+        <div class="result-header">
+          <span>📋 Compliance Report</span>
+          <button class="btn btn-outline btn-sm" onclick="copyResult('result-accreditation')">📋 Copy</button>
+        </div>
+        <div class="result-box visible" id="result-accreditation"></div>
+      </div>
+    </div>
+
+    <!-- Optimize Syllabus -->
+    <div id="panel-optimize" class="panel">
+      <h2>⚡ Optimize Syllabus</h2>
+      <p class="subtitle">IBM Granite rewrites and improves your syllabus based on selected optimization goals.</p>
+
+      <div class="card">
+        <h3>Syllabus to Optimize</h3>
+        <div class="upload-zone" id="upload-zone-optimize"
+          ondragover="dragOver(event,'upload-zone-optimize')"
+          ondragleave="dragLeave('upload-zone-optimize')"
+          ondrop="dropFile(event,'optimize-text')"
+          onclick="document.getElementById('file-input-optimize').click()">
+          <span class="icon">📄</span>
+          <p>Upload PDF, DOCX, or TXT</p>
+        </div>
+        <input type="file" id="file-input-optimize" accept=".pdf,.docx,.txt" style="display:none"
+          onchange="uploadFile(this,'optimize-text','')">
+        <label for="optimize-text">Syllabus Text:</label>
+        <textarea id="optimize-text" placeholder="Paste the syllabus to be optimized..."></textarea>
+
+        <label>Optimization Goals</label>
+        <div class="tags" id="opt-tags">
+          <span class="tag selected" onclick="toggleTag(this)">Improve Outcomes</span>
+          <span class="tag selected" onclick="toggleTag(this)">Update Resources</span>
+          <span class="tag selected" onclick="toggleTag(this)">Add Assessments</span>
+          <span class="tag" onclick="toggleTag(this)">Accreditation Alignment</span>
+          <span class="tag" onclick="toggleTag(this)">Industry Relevance</span>
+          <span class="tag" onclick="toggleTag(this)">Bloom's Taxonomy</span>
+          <span class="tag" onclick="toggleTag(this)">Instructional Strategies</span>
+        </div>
+
+        <button class="btn btn-secondary" onclick="runOptimize()" style="margin-top:10px">⚡ Optimize with IBM Granite</button>
+        <div class="loader" id="loader-optimize"><div class="spinner"></div> IBM Granite is optimizing your syllabus…</div>
+        <div class="status-bar" id="status-optimize"></div>
+      </div>
+      <div id="result-optimize-wrap" style="display:none">
+        <div class="result-header">
+          <span>🚀 Optimized Syllabus</span>
+          <button class="btn btn-outline btn-sm" onclick="copyResult('result-optimize')">📋 Copy</button>
+        </div>
+        <div class="result-box visible" id="result-optimize"></div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div id="panel-about" class="panel">
+      <h2>ℹ️ About This Application</h2>
+      <p class="subtitle">Problem Statement #14 — Syllabus and Curriculum Design Optimizer</p>
+
+      <div class="card">
+        <h3>Project Overview</h3>
+        <p style="font-size:.9rem;line-height:1.7;margin-bottom:12px;">
+          The <strong>Syllabus &amp; Curriculum Design Optimizer</strong> is an AI-powered system that assists faculty
+          in developing and refining academic course content. It autonomously analyzes syllabi, recommends improvements,
+          and aligns topics with learning outcomes and accreditation standards.
+        </p>
+        <p style="font-size:.9rem;line-height:1.7;">
+          Powered by <strong>IBM Granite</strong> on <strong>IBM Cloud Lite</strong>, the system uses natural language
+          processing to understand curriculum goals and suggest relevant topics, assessments, and resources.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Technology Stack</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.88rem;">
+          <div><strong>AI Model:</strong> IBM Granite (granite-13b-instruct-v2)</div>
+          <div><strong>Platform:</strong> IBM watsonx.ai (Cloud Lite)</div>
+          <div><strong>Backend:</strong> Python + FastAPI</div>
+          <div><strong>SDK:</strong> ibm-watsonx-ai</div>
+          <div><strong>File Parsing:</strong> pypdf + python-docx</div>
+          <div><strong>Standards:</strong> ABET, NAAC, NBA</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Setup Instructions</h3>
+        <ol style="font-size:.88rem;line-height:2;padding-left:18px;">
+          <li>Create an <strong>IBM Cloud Lite</strong> account at <a href="https://cloud.ibm.com" target="_blank">cloud.ibm.com</a></li>
+          <li>Provision <strong>IBM watsonx.ai</strong> service (free tier)</li>
+          <li>Copy your <strong>API key</strong> and <strong>Project ID</strong> from watsonx.ai</li>
+          <li>Update <code>.env</code> with your credentials</li>
+          <li>Run <code>pip install -r requirements.txt</code></li>
+          <li>Start the server: <code>python main.py</code></li>
+        </ol>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const API = '';  // same origin
+
+  // ── Panel navigation ─────────────────────────────
+  function showPanel(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  // ── Tag toggle ───────────────────────────────────
+  function toggleTag(el) { el.classList.toggle('selected'); }
+
+  function getSelectedTags(containerId) {
+    return [...document.querySelectorAll('#' + containerId + ' .tag.selected')]
+      .map(t => t.textContent.trim().toLowerCase().replace(/ /g,'_'));
+  }
+
+  // ── Drag & drop ──────────────────────────────────
+  function dragOver(e, zoneId)  { e.preventDefault(); document.getElementById(zoneId).classList.add('dragover'); }
+  function dragLeave(zoneId)    { document.getElementById(zoneId).classList.remove('dragover'); }
+  function dropFile(e, targetId) {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileUpload(file, targetId, '');
+  }
+
+  // ── File upload via input ────────────────────────
+  function uploadFile(input, targetId, nameId) {
+    const file = input.files[0];
+    if (file) handleFileUpload(file, targetId, nameId);
+  }
+
+  async function handleFileUpload(file, targetId, nameId) {
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res  = await fetch(API + '/api/upload-syllabus', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.text) {
+        document.getElementById(targetId).value = data.text;
+        if (nameId) document.getElementById(nameId).textContent = '✅ ' + file.name + ' loaded (' + data.characters + ' chars)';
+      }
+    } catch(e) {
+      alert('Upload failed: ' + e.message);
+    }
+  }
+
+  // ── Shared API call helper ───────────────────────
+  async function callAPI(endpoint, payload, loaderId, statusId, resultId, wrapId) {
+    const loader = document.getElementById(loaderId);
+    const status = document.getElementById(statusId);
+    const result = document.getElementById(resultId);
+    const wrap   = document.getElementById(wrapId);
+
+    loader.classList.add('visible');
+    status.className = 'status-bar';
+    wrap.style.display = 'none';
+
+    try {
+      const res  = await fetch(API + '/api/' + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'API error');
+      result.textContent = data.result;
+      wrap.style.display = 'block';
+      status.textContent = '✅ Generated by ' + data.model_used;
+      status.className = 'status-bar visible success';
+    } catch(e) {
+      status.textContent = '❌ Error: ' + e.message;
+      status.className = 'status-bar visible error';
+    } finally {
+      loader.classList.remove('visible');
+    }
+  }
+
+  // ── Feature handlers ─────────────────────────────
+  function runAnalyze() {
+    const text = document.getElementById('analyze-text').value.trim();
+    if (!text) { alert('Please paste or upload a syllabus first.'); return; }
+    callAPI('analyze', {
+      syllabus_text: text,
+      course_level: document.getElementById('analyze-level').value,
+      accreditation_body: document.getElementById('analyze-accred').value,
+    }, 'loader-analyze','status-analyze','result-analyze','result-analyze-wrap');
+  }
+
+  function runGenerate() {
+    const title = document.getElementById('gen-title').value.trim();
+    const desc  = document.getElementById('gen-desc').value.trim();
+    if (!title || !desc) { alert('Please fill in Course Title and Description.'); return; }
+    callAPI('generate', {
+      course_title: title,
+      course_description: desc,
+      duration_weeks: parseInt(document.getElementById('gen-weeks').value),
+      credits: parseInt(document.getElementById('gen-credits').value),
+      course_level: document.getElementById('gen-level').value,
+      department: document.getElementById('gen-dept').value,
+      accreditation_body: document.getElementById('gen-accred').value,
+      focus_areas: getSelectedTags('focus-tags'),
+    }, 'loader-generate','status-generate','result-generate','result-generate-wrap');
+  }
+
+  function runOutcomes() {
+    const text = document.getElementById('outcomes-text').value.trim();
+    if (!text) { alert('Please paste or upload a syllabus first.'); return; }
+    callAPI('map-outcomes', {
+      syllabus_text: text,
+      accreditation_body: document.getElementById('outcomes-accred').value,
+    }, 'loader-outcomes','status-outcomes','result-outcomes','result-outcomes-wrap');
+  }
+
+  function runResources() {
+    const title  = document.getElementById('res-title').value.trim();
+    const topics = document.getElementById('res-topics').value.trim();
+    if (!title || !topics) { alert('Please fill in Course Title and Topics.'); return; }
+    callAPI('recommend-resources', {
+      course_title: title,
+      topics: topics.split('\n').map(t=>t.trim()).filter(Boolean),
+      course_level: document.getElementById('res-level').value,
+    }, 'loader-resources','status-resources','result-resources','result-resources-wrap');
+  }
+
+  function runAccreditation() {
+    const text = document.getElementById('accred-text').value.trim();
+    if (!text) { alert('Please paste or upload a syllabus first.'); return; }
+    callAPI('check-accreditation', {
+      syllabus_text: text,
+      accreditation_body: document.getElementById('accred-body').value,
+    }, 'loader-accreditation','status-accreditation','result-accreditation','result-accreditation-wrap');
+  }
+
+  function runOptimize() {
+    const text = document.getElementById('optimize-text').value.trim();
+    if (!text) { alert('Please paste or upload a syllabus first.'); return; }
+    callAPI('optimize', {
+      syllabus_text: text,
+      optimization_goals: getSelectedTags('opt-tags'),
+    }, 'loader-optimize','status-optimize','result-optimize','result-optimize-wrap');
+  }
+
+  function copyResult(id) {
+    const txt = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(txt).then(() => alert('Copied to clipboard!'));
+  }
+</script>
+</body>
+</html>
